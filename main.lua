@@ -2,8 +2,6 @@
 -- added enemys, shooting, background etc.
 
 function love.load()
-	bg = love.graphics.newImage("bg.png")
-	
 	hero = {} -- new table for the hero
 	hero.x = 300	-- x,y coordinates of the hero
 	hero.y = 450
@@ -11,7 +9,7 @@ function love.load()
 	hero.height = 15
 	hero.speed = 150
 	hero.shots = {} -- holds our fired shots
-	
+	shootxposition = 0
 	enemies = {}
 	
 	for i=0,7 do
@@ -26,9 +24,30 @@ function love.load()
 	
 end
 
-function love.keyreleased(key)
-	if (key == "z") then
-		shoot()
+function love.keypressed(key)
+	if (key == "s") then
+    shootxposition = 15
+		shoot(shootxposition)
+	end
+  if (key == "d") then
+    shootxposition = 115
+		shoot(shootxposition)
+	end
+    if (key == "f") then
+    shootxposition = 215
+		shoot(shootxposition)
+	end
+    if (key == "j") then
+    shootxposition = 315
+		shoot(shootxposition)
+	end
+    if (key == "k") then
+    shootxposition = 415
+		shoot(shootxposition)
+	end
+    if (key == "l") then
+    shootxposition = 515
+		shoot(shootxposition)
 	end
 end
 
@@ -45,23 +64,19 @@ function love.update(dt)
 	
 	-- update the shots
 	for i,v in ipairs(hero.shots) do
-	
-		-- move them up up up
-		v.y = v.y - dt * 100
-		
+    -- move them up up up
+    v.y = v.y + dt * 100
 		-- mark shots that are not visible for removal
-		if v.y < 0 then
+		if v.y > 1000 then
 			table.insert(remShot, i)
 		end
-		
 		-- check for collision with enemies
 		for ii,vv in ipairs(enemies) do
 			if CheckCollision(v.x,v.y,2,5,vv.x,vv.y,vv.width,vv.height) then
 				
 				-- mark that enemy for removal
 				table.insert(remEnemy, ii)
-				-- mark the shot to be removed
-				table.insert(remShot, i)
+
 				
 			end
 		end
@@ -85,7 +100,7 @@ function love.update(dt)
 	-- update those evil enemies
 	for i,v in ipairs(enemies) do
 		-- let them fall down slowly
-		v.y = v.y + dt
+		v.y = v.y + dt + 1
 		
 		-- check for collision with ground
 		if v.y > 465 then
@@ -98,13 +113,12 @@ end
 
 
 function love.draw()
-	-- let's draw a background
-	love.graphics.setColor(255,255,255,255)
-	love.graphics.draw(bg)
-
+  	-- let's draw some ground
+	love.graphics.setColor(255,0,0,255)
+	love.graphics.rectangle("fill", 0, 750, 800, 150)
 	-- let's draw some ground
 	love.graphics.setColor(0,255,0,255)
-	love.graphics.rectangle("fill", 0, 465, 800, 150)
+	love.graphics.rectangle("fill", 0, 750, 800, 5)
 	
 	-- let's draw our hero
 	love.graphics.setColor(255,255,0,255)
@@ -113,7 +127,7 @@ function love.draw()
 	-- let's draw our heros shots
 	love.graphics.setColor(255,255,255,255)
 	for i,v in ipairs(hero.shots) do
-		love.graphics.rectangle("fill", v.x, v.y, 2, 5)
+		love.graphics.rectangle("fill", v.x, v.y, 75, 100)
 	end
 	-- let's draw our enemies
 	love.graphics.setColor(0,255,255,255)
@@ -122,11 +136,12 @@ function love.draw()
 	end
 end
 
-function shoot()
+function shoot(shootxposition)
 	
 	local shot = {}
-	shot.x = hero.x+hero.width/2
-	shot.y = hero.y
+  
+	shot.x = shootxposition
+	shot.y = 750
 	
 	table.insert(hero.shots, shot)
 	
