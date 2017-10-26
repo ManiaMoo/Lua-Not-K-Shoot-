@@ -2,6 +2,10 @@
 -- added enemys, shooting, background etc.
 
 function love.load()
+  src1 = love.audio.newSource("Floral.mp3")
+  src1:setVolume (0.5)
+  src2 = love.audio.newSource("nofx.ogg")
+  src2:setVolume (0.5)
 	hero = {} -- new table for the hero
 	hero.x = 300	-- x,y coordinates of the hero
 	hero.y = 450
@@ -10,21 +14,42 @@ function love.load()
 	hero.speed = 150
 	hero.shots = {} -- holds our fired shots
 	shootxposition = 0
+  songstarted = 0 
+  noteshit = 0
+  notesmissed = 0
 	enemies = {}
 	
-	for i=0,7 do
+	for i=0,9 do
 		enemy = {}
-		enemy.width = 40
-		enemy.height = 20
-		enemy.x = i * (enemy.width + 60) + 100
-		enemy.y = enemy.height + 100
-		table.insert(enemies, enemy)
+		enemy.width = 100
+		enemy.height = 15
+    --Possible X positions = 0 100 200 300 400 500
+    --Work out Y position based on song, rhythm to be figured out
+    --HARD CODED, NOT GOOD!
+    if i == 1 then
+      enemy.x = 0
+		  enemy.y = 0
+      table.insert(enemies, enemy)
+      end
+    if i == 2 then
+      enemy.x = 300
+      enemy.y = -200
+      table.insert(enemies, enemy)
+    end
 	end
-	
-	
 end
 
 function love.keypressed(key)
+  if (key == "1") then
+    src1:play()
+    songstarted = 1
+    print (noteshit)
+	end
+    if (key == "2") then
+    src2:play()
+    songstarted = 1
+    print (notesmissed)
+	end
 	if (key == "s") then
     shootxposition = 15
 		shoot(shootxposition)
@@ -75,6 +100,7 @@ function love.update(dt)
 			if CheckCollision(v.x,v.y,2,5,vv.x,vv.y,vv.width,vv.height) then
 				
 				-- mark that enemy for removal
+        noteshit = noteshit+1
 				table.insert(remEnemy, ii)
 
 				
@@ -85,7 +111,21 @@ function love.update(dt)
 		
 	end
 	
-	
+		-- update those evil enemies
+	for i,v in ipairs(enemies) do
+		-- let them fall down slowly
+    if songstarted == 1 then
+      v.y = v.y + dt + 5
+    end
+		
+		-- check for collision with ground
+		if v.y > 780 then
+      notesmissed = notesmissed + 1
+      table.insert(remEnemy, i)
+			-- you loose!!!
+		end
+		
+	end
 	-- remove the marked enemies
 	for i,v in ipairs(remEnemy) do
 		table.remove(enemies, v)
@@ -97,17 +137,7 @@ function love.update(dt)
 	
 	
 	
-	-- update those evil enemies
-	for i,v in ipairs(enemies) do
-		-- let them fall down slowly
-		v.y = v.y + dt + 1
-		
-		-- check for collision with ground
-		if v.y > 465 then
-			-- you loose!!!
-		end
-		
-	end
+
 	
 end
 
@@ -115,9 +145,12 @@ end
 function love.draw()
   	-- let's draw some ground
 	love.graphics.setColor(255,0,0,255)
-	love.graphics.rectangle("fill", 0, 750, 800, 150)
-	-- let's draw some ground
+	love.graphics.rectangle("fill", 0, 770, 800, 150)
+  	-- let's draw some ground
 	love.graphics.setColor(0,255,0,255)
+	love.graphics.rectangle("fill", 0, 745, 800, 15)
+	-- let's draw some ground
+	love.graphics.setColor(119,136,153,255)
 	love.graphics.rectangle("fill", 0, 750, 800, 5)
 	
 	-- let's draw our hero
@@ -130,10 +163,15 @@ function love.draw()
 		love.graphics.rectangle("fill", v.x, v.y, 75, 100)
 	end
 	-- let's draw our enemies
-	love.graphics.setColor(0,255,255,255)
+
 	for i,v in ipairs(enemies) do
+    love.graphics.setColor(0,255,255,255)
 		love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
+    love.graphics.setColor(0,0,0,255)
+    love.graphics.rectangle("line", v.x, v.y, v.width, v.height)
 	end
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.print("SCORE:"..noteshit*100, 25, 25)
 end
 
 function shoot(shootxposition)
