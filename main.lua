@@ -2,47 +2,78 @@
 -- added enemys, shooting, background etc.
 
 function love.load()
-  src1 = love.audio.newSource("Floral.mp3")
-  src1:setVolume (0.5)
-  src2 = love.audio.newSource("nofx.ogg")
-  src2:setVolume (0.5)
 	shots = {} -- holds our fired shots
 	shootxposition = 0
-  songstarted = 0 
+  gamestate = 0 
+  songstarted = 0
   noteshit = 0
   notesmissed = 0
 	enemies = {}
-	
-	for i=0,9 do
-		enemy = {}
-		enemy.width = 100
-		enemy.height = 15
-    --Possible X positions = 0 100 200 300 400 500
-    --Work out Y position based on song, rhythm to be figured out
-    --HARD CODED, NOT GOOD!
-    if i == 1 then
-      enemy.x = 0
-		  enemy.y = 0
-      table.insert(enemies, enemy)
-      end
-    if i == 2 then
-      enemy.x = 300
-      enemy.y = -200
-      table.insert(enemies, enemy)
-    end
-	end
 end
-
+function love.gameload()
+  if (gamestate == 0) then
+    
+  end
+  
+  if (gamestate == 1) then
+    src1 = love.audio.newSource("Floral.mp3")
+    src1:setVolume (0.5)
+    for i=0,9 do
+      enemy = {}
+      enemy.width = 100
+      enemy.height = 15
+      --Possible X positions = 0 100 200 300 400 500
+      --Work out Y position based on song, rhythm to be figured out
+      --HARD CODED, NOT GOOD!
+      if i == 1 then
+        enemy.x = 0
+        enemy.y = 0
+        table.insert(enemies, enemy)
+        end
+      if i == 2 then
+        enemy.x = 300
+        enemy.y = -200
+        table.insert(enemies, enemy)
+      end
+    end
+  end
+  if (gamestate == 2) then
+    src1 = love.audio.newSource("nofx.ogg")
+    src1:setVolume (0.5)
+      for i=0,9 do
+      enemy = {}
+      enemy.width = 100
+      enemy.height = 15
+      --Possible X positions = 0 100 200 300 400 500
+      --Work out Y position based on song, rhythm to be figured out
+      --HARD CODED, NOT GOOD!
+      if i == 1 then
+        enemy.x = 0
+        enemy.y = 0
+        table.insert(enemies, enemy)
+      end
+      if i == 2 then
+        enemy.x = 300
+        enemy.y = -200
+        table.insert(enemies, enemy)
+      end
+    end
+  end
+end
 function love.keypressed(key)
   if (key == "1") then
-    src1:play()
-    songstarted = 1
+    gamestate = 1
+    love.gameload()
     print (noteshit)
 	end
     if (key == "2") then
-    src2:play()
-    songstarted = 1
+    gamestate = 2
+    love.gameload()
     print (notesmissed)
+	end
+    if (key == "p") then
+    songstarted = 1
+    src1:play()
 	end
 	if (key == "s") then
     shootxposition = 15
@@ -133,13 +164,16 @@ end
 function love.draw()
   	-- let's draw some ground
 	love.graphics.setColor(255,0,0,255)
-	love.graphics.rectangle("fill", 0, 770, 800, 150)
+	love.graphics.rectangle("fill", 0, 770, 605, 150)
   	-- let's draw some ground
 	love.graphics.setColor(0,255,0,255)
-	love.graphics.rectangle("fill", 0, 745, 800, 15)
+	love.graphics.rectangle("fill", 0, 745, 605, 15)
 	-- let's draw some ground
 	love.graphics.setColor(119,136,153,255)
-	love.graphics.rectangle("fill", 0, 750, 800, 5)
+	love.graphics.rectangle("fill", 0, 750, 605, 5)
+  	-- let's draw some ground
+	love.graphics.setColor(255,255,255,255)
+	love.graphics.rectangle("fill", 605, 0, 10, 800)
 	
 	
 	-- let's draw our heros shots
@@ -156,7 +190,8 @@ function love.draw()
     love.graphics.rectangle("line", v.x, v.y, v.width, v.height)
 	end
     love.graphics.setColor(255,255,255,255)
-    love.graphics.print("SCORE:"..noteshit*100, 25, 25)
+    love.graphics.print("SCORE:"..noteshit*100, 650, 25)
+    love.graphics.print("MISSED NOTES:"..notesmissed, 650, 45)
 end
 
 function shoot(shootxposition)
