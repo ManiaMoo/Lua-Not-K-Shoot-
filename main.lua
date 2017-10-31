@@ -6,13 +6,7 @@ function love.load()
   src1:setVolume (0.5)
   src2 = love.audio.newSource("nofx.ogg")
   src2:setVolume (0.5)
-	hero = {} -- new table for the hero
-	hero.x = 300	-- x,y coordinates of the hero
-	hero.y = 450
-	hero.width = 30
-	hero.height = 15
-	hero.speed = 150
-	hero.shots = {} -- holds our fired shots
+	shots = {} -- holds our fired shots
 	shootxposition = 0
   songstarted = 0 
   noteshit = 0
@@ -77,18 +71,12 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-	-- keyboard actions for our hero
-	if love.keyboard.isDown("left") then
-		hero.x = hero.x - hero.speed*dt
-	elseif love.keyboard.isDown("right") then
-		hero.x = hero.x + hero.speed*dt
-	end
 	
 	local remEnemy = {}
 	local remShot = {}
 	
 	-- update the shots
-	for i,v in ipairs(hero.shots) do
+	for i,v in ipairs(shots) do
     -- move them up up up
     v.y = v.y + dt * 100
 		-- mark shots that are not visible for removal
@@ -115,7 +103,7 @@ function love.update(dt)
 	for i,v in ipairs(enemies) do
 		-- let them fall down slowly
     if songstarted == 1 then
-      v.y = v.y + dt + 5
+      v.y = v.y + dt * 500
     end
 		
 		-- check for collision with ground
@@ -132,7 +120,7 @@ function love.update(dt)
 	end
 	
 	for i,v in ipairs(remShot) do
-		table.remove(hero.shots, v)
+		table.remove(shots, v)
 	end
 	
 	
@@ -153,13 +141,10 @@ function love.draw()
 	love.graphics.setColor(119,136,153,255)
 	love.graphics.rectangle("fill", 0, 750, 800, 5)
 	
-	-- let's draw our hero
-	love.graphics.setColor(255,255,0,255)
-	love.graphics.rectangle("fill", hero.x, hero.y, hero.width, hero.height)
 	
 	-- let's draw our heros shots
 	love.graphics.setColor(255,255,255,255)
-	for i,v in ipairs(hero.shots) do
+	for i,v in ipairs(shots) do
 		love.graphics.rectangle("fill", v.x, v.y, 75, 100)
 	end
 	-- let's draw our enemies
@@ -181,7 +166,7 @@ function shoot(shootxposition)
 	shot.x = shootxposition
 	shot.y = 750
 	
-	table.insert(hero.shots, shot)
+	table.insert(shots, shot)
 	
 	
 end
