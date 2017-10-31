@@ -8,6 +8,7 @@ function love.load()
   songstarted = 0
   noteshit = 0
   notesmissed = 0
+  notescreated = 0
 	enemies = {}
 end
 function love.gameload()
@@ -18,6 +19,7 @@ function love.gameload()
   if (gamestate == 1) then
     src1 = love.audio.newSource("Floral.mp3")
     src1:setVolume (0.5)
+    if notescreated == 0 then
     for i=0,9 do
       enemy = {}
       enemy.width = 100
@@ -36,11 +38,14 @@ function love.gameload()
         table.insert(enemies, enemy)
       end
     end
+    end
+    notescreated = 1
   end
   if (gamestate == 2) then
     src1 = love.audio.newSource("nofx.ogg")
     src1:setVolume (0.5)
-      for i=0,9 do
+    if notescreated == 0 then
+    for i=0,9 do
       enemy = {}
       enemy.width = 100
       enemy.height = 15
@@ -58,6 +63,8 @@ function love.gameload()
         table.insert(enemies, enemy)
       end
     end
+    end
+    notescreated = 1
   end
 end
 function love.keypressed(key)
@@ -71,10 +78,14 @@ function love.keypressed(key)
     love.gameload()
     print (notesmissed)
 	end
-    if (key == "p") then
-    songstarted = 1
-    src1:play()
-	end
+    if ((key == "p") and (songstarted == 0)) then
+      if ((gamestate == 1) or (gamestate == 2)) then
+        if (songstarted == 0) then
+          songstarted = 1
+        end
+        src1:play()
+      end
+    end
 	if (key == "s") then
     shootxposition = 15
 		shoot(shootxposition)
