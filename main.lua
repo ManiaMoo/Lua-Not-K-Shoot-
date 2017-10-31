@@ -15,15 +15,15 @@ function love.gameload()
   
   if (gamestate == 1) then
     local file = io.open("Floral.txt")
-     
     src1 = love.audio.newSource("Floral.mp3")
     src1:setVolume (0.5)
     if notescreated == 0 then
      for line in file:lines() do
       enemy = {}
-      local filex, filey = unpack(line:split(" "))
-      enemy.x = filex
-      enemy.y = filey
+      local filex, filey = line:match'(%S+)%s+(%S+)'
+      
+      enemy.x = tonumber(filex)
+      enemy.y = tonumber(filey)
       enemy.width = 100
       enemy.height = 15
       table.insert(enemies, enemy)
