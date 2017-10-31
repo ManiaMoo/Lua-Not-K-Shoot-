@@ -8,13 +8,6 @@ function love.load()
   notescreated = 0
 	enemies = {}
 end
-function split(s, delimiter)
-    result = {};
-    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-        table.insert(result, match);
-    end
-    return result;
-end
 function love.gameload()
   if (gamestate == 0) then
     
@@ -28,7 +21,7 @@ function love.gameload()
     if notescreated == 0 then
      for line in file:lines() do
       enemy = {}
-      local filex, filey = unpack(line:split())
+      local filex, filey = unpack(line:split(" "))
       enemy.x = filex
       enemy.y = filey
       enemy.width = 100
