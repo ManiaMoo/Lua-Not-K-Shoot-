@@ -1,6 +1,3 @@
--- tutorial #2
--- added enemys, shooting, background etc.
-
 function love.load()
 	shots = {} -- holds our fired shots
 	shootxposition = 0
@@ -11,32 +8,35 @@ function love.load()
   notescreated = 0
 	enemies = {}
 end
+function split(s, delimiter)
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
 function love.gameload()
   if (gamestate == 0) then
     
   end
   
   if (gamestate == 1) then
+    local file = io.open("Floral.txt")
+     
     src1 = love.audio.newSource("Floral.mp3")
     src1:setVolume (0.5)
     if notescreated == 0 then
-    for i=0,9 do
+     for line in file:lines() do
       enemy = {}
+      local filex, filey = unpack(line:split())
+      enemy.x = filex
+      enemy.y = filey
       enemy.width = 100
       enemy.height = 15
+      table.insert(enemies, enemy)
       --Possible X positions = 0 100 200 300 400 500
       --Work out Y position based on song, rhythm to be figured out
       --HARD CODED, NOT GOOD!
-      if i == 1 then
-        enemy.x = 0
-        enemy.y = 0
-        table.insert(enemies, enemy)
-        end
-      if i == 2 then
-        enemy.x = 300
-        enemy.y = -200
-        table.insert(enemies, enemy)
-      end
     end
     end
     notescreated = 1
