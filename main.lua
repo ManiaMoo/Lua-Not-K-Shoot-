@@ -6,6 +6,8 @@ function love.load()
   songstarted = 0
   noteshit = 0
   notesmissed = 0
+  missvisual = 0
+  misstimer = 0
   notescreated = 0
   combo = 0
 	enemies = {}
@@ -119,7 +121,16 @@ function love.update(dt)
 	notes()
 	local remEnemy = {}
 	local remShot = {}
-	
+  
+  if (missvisual == 1) then
+    misstimer = misstimer + dt
+    print ("miss")
+      if misstimer >= 1 then
+        missvisual = 0
+        misstimer = 0
+    end
+  end
+  
 	-- update the shots
 	for i,v in ipairs(shots) do
     -- move them down 
@@ -157,6 +168,11 @@ function love.update(dt)
 		if v.y > 780 then
       notesmissed = notesmissed + 1
       combo = 0
+      
+      missvisual = 1
+      misstimer = 0
+
+      
       table.remove(enemies, i)
 			-- you loose!!!
 		end
@@ -177,6 +193,7 @@ end
 
 
 function love.draw()
+  font1 = love.graphics.newFont("digitalfont.ttf", 15)
   	-- let's draw some ground
 	love.graphics.setColor(255,0,0,255)
 	love.graphics.rectangle("fill", 0, 770, 605, 150)
@@ -207,6 +224,12 @@ function love.draw()
     love.graphics.print("MISSED NOTES:"..notesmissed, 650, 45)
     if combo >= 3 then
     love.graphics.print("COMBO:"..combo, 650, 65)
+  end
+  if missvisual == 1 then
+      love.graphics.setColor(255,255,255,255)
+
+      love.graphics.setFont(font1)
+      love.graphics.print("MISS"..misstimer, 650, 85)
     end
 end
 
