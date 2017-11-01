@@ -27,7 +27,7 @@ function love.gameload()
      for line in file:lines() do
       enemy = {}
       local filex, filey = line:match'(%S+)%s+(%S+)'
-      filey = ((filey+800)/2)
+      filey = ((filey/1.45)+600)
       enemy.x = tonumber(filex)
       enemy.y = tonumber(filey)
       enemy.width = 100
