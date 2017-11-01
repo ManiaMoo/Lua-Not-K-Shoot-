@@ -1,14 +1,18 @@
 function love.load()
 	shots = {} -- holds our fired shots
 	shootxposition = 0
+  notefalling = 0
   gamestate = 0 
   songstarted = 0
   noteshit = 0
   notesmissed = 0
   notescreated = 0
+  combo = 0
 	enemies = {}
+  love.gameload()
 end
 function love.gameload()
+  
   if (gamestate == 0) then
     
   end
@@ -61,14 +65,13 @@ function love.gameload()
   end
 end
 function love.keypressed(key)
-  if (key == "1") then
+    if (key == "1") then
     gamestate = 1
     love.gameload()
     print (noteshit)
 	end
     if (key == "2") then
     gamestate = 2
-    love.gameload()
     print (notesmissed)
 	end
     if ((key == "p") and (songstarted == 0)) then
@@ -79,41 +82,50 @@ function love.keypressed(key)
         src1:play()
       end
     end
-	if (key == "s") then
+  end
+function notes()
+	if (love.keyboard.isDown ("s")) then
     shootxposition = 15
 		shoot(shootxposition)
 	end
-  if (key == "d") then
+  if (love.keyboard.isDown ("d")) then
+    notefalling = 0
     shootxposition = 115
 		shoot(shootxposition)
 	end
-    if (key == "f") then
+    if (love.keyboard.isDown ("f")) then
+    notefalling = 0
     shootxposition = 215
 		shoot(shootxposition)
 	end
-    if (key == "j") then
+    if (love.keyboard.isDown ("j")) then
+    notefalling = 0
     shootxposition = 315
 		shoot(shootxposition)
 	end
-    if (key == "k") then
+    if (love.keyboard.isDown ("k")) then
+    notefalling = 0
     shootxposition = 415
 		shoot(shootxposition)
 	end
-    if (key == "l") then
+    if (love.keyboard.isDown ("l")) then
+    notefalling = 0
     shootxposition = 515
 		shoot(shootxposition)
 	end
 end
 
 function love.update(dt)
-	
+	notes()
 	local remEnemy = {}
 	local remShot = {}
 	
 	-- update the shots
 	for i,v in ipairs(shots) do
-    -- move them up up up
-    v.y = v.y + dt * 100
+    -- move them down 
+
+      v.y = v.y + dt * 100
+
 		-- mark shots that are not visible for removal
 		if v.y > 1000 then
 			table.insert(remShot, i)
@@ -124,8 +136,8 @@ function love.update(dt)
 				
 				-- mark that enemy for removal
         noteshit = noteshit+1
-				table.insert(remEnemy, ii)
-
+        combo = combo + 1
+        table.remove(enemies, ii)
 				
 			end
 		end
@@ -144,15 +156,14 @@ function love.update(dt)
 		-- check for collision with ground
 		if v.y > 780 then
       notesmissed = notesmissed + 1
-      table.insert(remEnemy, i)
+      combo = 0
+      table.remove(enemies, i)
 			-- you loose!!!
 		end
 		
 	end
 	-- remove the marked enemies
-	for i,v in ipairs(remEnemy) do
-		table.remove(enemies, v)
-	end
+
 	
 	for i,v in ipairs(remShot) do
 		table.remove(shots, v)
@@ -190,12 +201,13 @@ function love.draw()
 	for i,v in ipairs(enemies) do
     love.graphics.setColor(0,255,255,255)
 		love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
-    love.graphics.setColor(0,0,0,255)
-    love.graphics.rectangle("line", v.x, v.y, v.width, v.height)
 	end
     love.graphics.setColor(255,255,255,255)
     love.graphics.print("SCORE:"..noteshit*100, 650, 25)
     love.graphics.print("MISSED NOTES:"..notesmissed, 650, 45)
+    if combo >= 3 then
+    love.graphics.print("COMBO:"..combo, 650, 65)
+    end
 end
 
 function shoot(shootxposition)
