@@ -1,5 +1,5 @@
 function love.load()
-	shots = {} -- holds our fired shots
+	shots = {}
 	shootxposition = 0
   notefalling = 0
   gamestate = 0 
@@ -20,20 +20,20 @@ function love.gameload()
   end
   
   if (gamestate == 1) then
-    local file = io.open("Floral.txt")
-    src1 = love.audio.newSource("Floral.mp3")
+    local file = io.open("cracktrax.txt")
+    src1 = love.audio.newSource("cracktrax.mp3")
     src1:setVolume (0.5)
     if notescreated == 0 then
      for line in file:lines() do
       enemy = {}
       local filex, filey = line:match'(%S+)%s+(%S+)'
-      
+      filey = ((filey+800)/2)
       enemy.x = tonumber(filex)
       enemy.y = tonumber(filey)
       enemy.width = 100
       enemy.height = 15
       table.insert(enemies, enemy)
-      --Possible X positions = 0 100 200 300 400 500
+      --Possible X positions = 0 (100 200 300 400) 500
       --Work out Y position based on song, rhythm to be figured out
       --HARD CODED, NOT GOOD!
     end
@@ -86,10 +86,10 @@ function love.keypressed(key)
     end
   end
 function notes()
-	if (love.keyboard.isDown ("s")) then
-    shootxposition = 15
-		shoot(shootxposition)
-	end
+	--if (love.keyboard.isDown ("s")) then
+  --  shootxposition = 15
+	--	shoot(shootxposition)
+	--end
   if (love.keyboard.isDown ("d")) then
     notefalling = 0
     shootxposition = 115
@@ -110,11 +110,11 @@ function notes()
     shootxposition = 415
 		shoot(shootxposition)
 	end
-    if (love.keyboard.isDown ("l")) then
-    notefalling = 0
-    shootxposition = 515
-		shoot(shootxposition)
-	end
+  --  if (love.keyboard.isDown ("l")) then
+  --  notefalling = 0
+  --  shootxposition = 515
+	--	shoot(shootxposition)
+	--end
 end
 
 function love.update(dt)
@@ -124,7 +124,6 @@ function love.update(dt)
   
   if (missvisual == 1) then
     misstimer = misstimer + dt
-    print ("miss")
       if misstimer >= 1 then
         missvisual = 0
         misstimer = 0
@@ -161,7 +160,7 @@ function love.update(dt)
 	for i,v in ipairs(enemies) do
 		-- let them fall down slowly
     if songstarted == 1 then
-      v.y = v.y + dt * 500
+      v.y = v.y + dt * 700
     end
 		
 		-- check for collision with ground
@@ -193,7 +192,9 @@ end
 
 
 function love.draw()
-  font1 = love.graphics.newFont("digitalfont.ttf", 15)
+  font1 = love.graphics.newFont("digitalfont.ttf", 56)
+  font2 = love.graphics.newFont("square.ttf", 42)
+  love.graphics.setFont(font2)
   	-- let's draw some ground
 	love.graphics.setColor(255,0,0,255)
 	love.graphics.rectangle("fill", 0, 770, 605, 150)
@@ -220,19 +221,17 @@ function love.draw()
 		love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
 	end
     love.graphics.setColor(255,255,255,255)
-    love.graphics.print("SCORE:"..noteshit*100, 650, 25)
-    love.graphics.print("MISSED NOTES:"..notesmissed, 650, 45)
+    love.graphics.print("SCORE: "..noteshit*100, 650, 25)
+    love.graphics.print("MISSED NOTES: "..notesmissed, 650, 95)
     if combo >= 3 then
-    love.graphics.print("COMBO:"..combo, 650, 65)
+    love.graphics.print(combo.." COMBO", 230, 600)
   end
   if missvisual == 1 then
       love.graphics.setColor(255,255,255,255)
-
-      love.graphics.setFont(font1)
-      love.graphics.print("MISS"..misstimer, 650, 85)
+      love.graphics.print("MISS", 260, 600)
+      
     end
 end
-
 function shoot(shootxposition)
 	
 	local shot = {}
