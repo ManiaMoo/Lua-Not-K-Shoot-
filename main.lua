@@ -19,6 +19,7 @@ function love.load()
   backgroundgraphic = love.graphics.newImage("ingame.png")
   song1 = love.graphics.newImage("trax.jpg")
   nosong = love.graphics.newImage("nosong.jpg")
+  hitmarker = love.graphics.newImage("hitmarker.png")
   love.gameload()
 end
 function love.gameload()
@@ -148,6 +149,12 @@ function love.update(dt)
       if endtimer >= 2 then  
         gamestate = 0
         endtimer = 0
+        combo = 0
+        noteshit = 0
+        notesmissed = 0
+        songstarted = 0
+        notefalling = 0
+        notescreated = 0
       end
     end
   end
