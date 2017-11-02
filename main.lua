@@ -11,6 +11,8 @@ function love.load()
   misstimer = 0
   notescreated = 0
   combo = 0
+  songlives = 0
+  lifecombo = 0
   previousscore = 0
   endtimer = 0
   songending = 0
@@ -42,6 +44,7 @@ function love.gameload()
       enemy.width = 100
       enemy.height = 15
       table.insert(enemies, enemy)
+      songlives = 30
       --Possible X positions = 0 (100 200 300 400) 500
       --Work out Y position based on song, rhythm to be figured out
       --HARD CODED, NOT GOOD!
@@ -81,10 +84,10 @@ function love.keypressed(key)
     love.gameload()
     print (noteshit)
 	end
-    if (key == "2") then
-    gamestate = 2
-    print (notesmissed)
-	end
+  --  if (key == "2") then
+  --  gamestate = 2
+  --  print (notesmissed)
+	--end
     if ((key == "p") and (songstarted == 0)) then
       if ((gamestate == 1) or (gamestate == 2)) then
         if (songstarted == 0) then
@@ -146,7 +149,9 @@ function love.update(dt)
       end
       endtimer = endtimer + dt
       songending = 0
+      
       if endtimer >= 2 then  
+        src1:stop()
         gamestate = 0
         endtimer = 0
         combo = 0
@@ -155,6 +160,9 @@ function love.update(dt)
         songstarted = 0
         notefalling = 0
         notescreated = 0
+        songlives = 0
+        lifecombo = 0
+        
       end
     end
   end
@@ -175,6 +183,11 @@ function love.update(dt)
 				-- mark that enemy for removal
         noteshit = noteshit+1
         combo = combo + 1
+        lifecombo = lifecombo + 1
+        if lifecombo == 50 then
+          songlives = songlives + 1
+          lifecombo = 0
+        end
         table.remove(enemies, ii)
 				
 			end
@@ -196,9 +209,16 @@ function love.update(dt)
       screen:setShake(20)
       notesmissed = notesmissed + 1
       combo = 0
-      
+      if songlives >= 1 then
+      songlives = songlives - 1
+      end
+      lifecombo = 0
       missvisual = 1
       misstimer = 0
+      if songlives <= 0 then
+        notesmissed = 9999
+        enemies = {}
+      end
     
       table.remove(enemies, i)
 		end
@@ -270,6 +290,7 @@ function love.draw()
     love.graphics.setColor(255,255,255,255)
     love.graphics.print("SCORE: "..noteshit*100, 650, 25)
     love.graphics.print("MISSED NOTES: "..notesmissed, 650, 95)
+    love.graphics.print(songlives, 275,205)
     if combo >= 3 then
     love.graphics.print(combo.." COMBO", 230, 600)
 
@@ -278,7 +299,7 @@ function love.draw()
   end
   if missvisual == 1 then
       love.graphics.setColor(255,255,255,255)
-      love.graphics.print("MISS", 260, 600)
+      love.graphics.print("MISS", 260, 645)
       
     end
 end
