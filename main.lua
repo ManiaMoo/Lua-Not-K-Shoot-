@@ -1,3 +1,4 @@
+local screen = require "shack"
 function love.load()
 	shots = {}
 	shootxposition = 0
@@ -11,6 +12,10 @@ function love.load()
   notescreated = 0
   combo = 0
 	enemies = {}
+  menugraphic = love.graphics.newImage("mainmenu.png")
+  backgroundgraphic = love.graphics.newImage("ingame.png")
+  song1 = love.graphics.newImage("trax.jpg")
+  nosong = love.graphics.newImage("nosong.jpg")
   love.gameload()
 end
 function love.gameload()
@@ -27,7 +32,7 @@ function love.gameload()
      for line in file:lines() do
       enemy = {}
       local filex, filey = line:match'(%S+)%s+(%S+)'
-      filey = ((filey/1.43)+550)
+      filey = ((filey/1.43)+580)
       enemy.x = tonumber(filex)
       enemy.y = tonumber(filey)
       enemy.width = 100
@@ -121,7 +126,7 @@ function love.update(dt)
 	notes()
 	local remEnemy = {}
 	local remShot = {}
-  
+  screen:update(dt)
   if (missvisual == 1) then
     misstimer = misstimer + dt
       if misstimer >= 1 then
@@ -165,15 +170,14 @@ function love.update(dt)
 		
 		-- check for collision with ground
 		if v.y > 780 then
+      screen:setShake(20)
       notesmissed = notesmissed + 1
       combo = 0
       
       missvisual = 1
       misstimer = 0
-
-      
+    
       table.remove(enemies, i)
-			-- you loose!!!
 		end
 		
 	end
@@ -192,18 +196,37 @@ end
 
 
 function love.draw()
+  screen:apply()
   font1 = love.graphics.newFont("digitalfont.ttf", 56)
   font2 = love.graphics.newFont("square.ttf", 42)
+  font3 = love.graphics.newFont("square.ttf", 26)
   love.graphics.setFont(font2)
+
   	-- let's draw some ground
-	love.graphics.setColor(255,0,0,255)
-	love.graphics.rectangle("fill", 0, 770, 605, 150)
+
+  
+  if gamestate == 0 then
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.setFont(font3)
+    love.graphics.draw(menugraphic,0,0)
+    love.graphics.draw(song1,645,198,0,0.2,0.2)
+    love.graphics.print("Lite Show Magic\nCrackTraxxxx\n \nPress 1 to Play", 840, 198)
+    love.graphics.draw(nosong,645,340,0,0.35,0.35)
+    love.graphics.draw(nosong,645,485,0,0.35,0.35)
+    love.graphics.setFont(font2)
+  end
+  if gamestate == 1 then
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.draw(backgroundgraphic,0,0)
+    love.graphics.draw(song1,630,198,0,0.45,0.45)
+    love.graphics.print("Lite Show Magic\nCrackTraxxxx", 650, 500)
+  end
   	-- let's draw some ground
 	love.graphics.setColor(0,255,0,255)
-	love.graphics.rectangle("fill", 0, 745, 605, 15)
+	love.graphics.rectangle("fill", 0, 715, 605, 15)
 	-- let's draw some ground
 	love.graphics.setColor(119,136,153,255)
-	love.graphics.rectangle("fill", 0, 750, 605, 5)
+	love.graphics.rectangle("fill", 0, 720, 605, 5)
   	-- let's draw some ground
 	love.graphics.setColor(255,255,255,255)
 	love.graphics.rectangle("fill", 605, 0, 10, 800)
@@ -220,11 +243,15 @@ function love.draw()
     love.graphics.setColor(0,255,255,255)
 		love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
 	end
+  if gamestate == 1 then
     love.graphics.setColor(255,255,255,255)
     love.graphics.print("SCORE: "..noteshit*100, 650, 25)
     love.graphics.print("MISSED NOTES: "..notesmissed, 650, 95)
     if combo >= 3 then
     love.graphics.print(combo.." COMBO", 230, 600)
+
+  end
+
   end
   if missvisual == 1 then
       love.graphics.setColor(255,255,255,255)
@@ -237,7 +264,7 @@ function shoot(shootxposition)
 	local shot = {}
   
 	shot.x = shootxposition
-	shot.y = 750
+	shot.y = 725
 	
 	table.insert(shots, shot)
 	
