@@ -11,6 +11,9 @@ function love.load()
   misstimer = 0
   notescreated = 0
   combo = 0
+  previousscore = 0
+  endtimer = 0
+  songending = 0
 	enemies = {}
   menugraphic = love.graphics.newImage("mainmenu.png")
   backgroundgraphic = love.graphics.newImage("ingame.png")
@@ -32,7 +35,7 @@ function love.gameload()
      for line in file:lines() do
       enemy = {}
       local filex, filey = line:match'(%S+)%s+(%S+)'
-      filey = ((filey/1.43)+580)
+      filey = ((filey/1.43)+550)
       enemy.x = tonumber(filex)
       enemy.y = tonumber(filey)
       enemy.width = 100
@@ -127,6 +130,7 @@ function love.update(dt)
 	local remEnemy = {}
 	local remShot = {}
   screen:update(dt)
+ 
   if (missvisual == 1) then
     misstimer = misstimer + dt
       if misstimer >= 1 then
@@ -134,7 +138,19 @@ function love.update(dt)
         misstimer = 0
     end
   end
-  
+  if (gamestate == 1) then
+    if ((noteshit + notesmissed) >= 661) then
+      if (previousscore <= (noteshit*100)) then
+        previousscore = noteshit*100
+      end
+      endtimer = endtimer + dt
+      songending = 0
+      if endtimer >= 2 then  
+        gamestate = 0
+        endtimer = 0
+      end
+    end
+  end
 	-- update the shots
 	for i,v in ipairs(shots) do
     -- move them down 
@@ -160,7 +176,7 @@ function love.update(dt)
 		
 		
 	end
-	
+
 		-- update those evil enemies
 	for i,v in ipairs(enemies) do
 		-- let them fall down slowly
@@ -210,7 +226,7 @@ function love.draw()
     love.graphics.setFont(font3)
     love.graphics.draw(menugraphic,0,0)
     love.graphics.draw(song1,645,198,0,0.2,0.2)
-    love.graphics.print("Lite Show Magic\nCrackTraxxxx\n \nPress 1 to Play", 840, 198)
+    love.graphics.print("Lite Show Magic\nCrackTraxxxx\nBEST:"..previousscore.."\nPress 1 to Play", 840, 198)
     love.graphics.draw(nosong,645,340,0,0.35,0.35)
     love.graphics.draw(nosong,645,485,0,0.35,0.35)
     love.graphics.setFont(font2)
