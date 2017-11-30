@@ -98,33 +98,43 @@ function love.keypressed(key)
     end
   end
 function notes()
-	if (love.keyboard.isDown ("s")) then
+	if (love.keyboard.isDown ("a")) then
     shootxposition = 15
 		shoot(shootxposition)
 	end
-  if (love.keyboard.isDown ("d")) then
+  if (love.keyboard.isDown ("s")) then
     notefalling = 0
     shootxposition = 115
 		shoot(shootxposition)
 	end
-    if (love.keyboard.isDown ("f")) then
+    if (love.keyboard.isDown ("d")) then
     notefalling = 0
     shootxposition = 215
 		shoot(shootxposition)
 	end
-    if (love.keyboard.isDown ("j")) then
+    if (love.keyboard.isDown ("f")) then
     notefalling = 0
     shootxposition = 315
 		shoot(shootxposition)
 	end
-    if (love.keyboard.isDown ("k")) then
+    if (love.keyboard.isDown ("kp4")) then
     notefalling = 0
     shootxposition = 415
 		shoot(shootxposition)
 	end
-    if (love.keyboard.isDown ("l")) then
+  if (love.keyboard.isDown ("kp5")) then
     notefalling = 0
     shootxposition = 515
+		shoot(shootxposition)
+	end
+    if (love.keyboard.isDown ("kp6")) then
+    notefalling = 0
+    shootxposition = 615
+		shoot(shootxposition)
+	end
+    if (love.keyboard.isDown ("kp+")) then
+    notefalling = 0
+    shootxposition = 715
 		shoot(shootxposition)
 	end
 end
