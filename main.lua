@@ -1,4 +1,7 @@
 local screen = require "shack"
+local anim8 = require "anim8"
+local image, animation
+
 function love.load()
 	shots = {}
 	shootxposition = 0
@@ -17,20 +20,31 @@ function love.load()
   endtimer = 0
   songending = 0
 	enemies = {}
-  menugraphic = love.graphics.newImage("mainmenu.png")
+  menumusic = love.audio.newSource("Brynhildr.mp3")
+  titlegraphic = love.graphics.newImage("Dual Step Logo.png")
+  
+  titlebackground = love.graphics.newImage("menu background.png")
+  local g = anim8.newGrid(720, 1280, titlebackground:getWidth(), titlebackground:getHeight())
+  animation = anim8.newAnimation(g('1-4',1, '1-4',2), 0.05)
+
   backgroundgraphic = love.graphics.newImage("ingame.png")
-  song1 = love.graphics.newImage("trax.jpg")
-  nosong = love.graphics.newImage("nosong.jpg")
+  song1 = love.graphics.newImage("fromgardern.jpg")
+  song2 = love.graphics.newImage("672344.png")
   hitmarker = love.graphics.newImage("hitmarker.png")
   love.gameload()
+  
+
 end
 function love.gameload()
-  
+      menumusic:setVolume(0.25)
+      menumusic:play()
   if (gamestate == 0) then
+
+  end
+  if (gamestate == 1) then
     
   end
-  
-  if (gamestate == 1) then
+  if (gamestate == 2) then
     local file = io.open("cracktrax.txt")
     src1 = love.audio.newSource("cracktrax.mp3")
     src1:setVolume (0.5)
@@ -52,7 +66,7 @@ function love.gameload()
     end
     notescreated = 1
   end
-  if (gamestate == 2) then
+  if (gamestate == 3) then
     src1 = love.audio.newSource("nofx.ogg")
     src1:setVolume (0.5)
     if notescreated == 0 then
@@ -79,17 +93,17 @@ function love.gameload()
   end
 end
 function love.keypressed(key)
-    if (key == "1") then
+  if (key == "return") then
     gamestate = 1
     love.gameload()
     print (noteshit)
 	end
-  --  if (key == "2") then
-  --  gamestate = 2
-  --  print (notesmissed)
-	--end
+   if (key == "2") then
+    gamestate = 3
+    print (notesmissed)
+	end
     if ((key == "p") and (songstarted == 0)) then
-      if ((gamestate == 1) or (gamestate == 2)) then
+      if ((gamestate == 2) or (gamestate == 3)) then
         if (songstarted == 0) then
           songstarted = 1
         end
@@ -98,10 +112,6 @@ function love.keypressed(key)
     end
   end
 function notes()
-	if (love.keyboard.isDown ("s")) then
-    shootxposition = 15
-		shoot(shootxposition)
-	end
   if (love.keyboard.isDown ("d")) then
     notefalling = 0
     shootxposition = 115
@@ -122,14 +132,10 @@ function notes()
     shootxposition = 415
 		shoot(shootxposition)
 	end
-    if (love.keyboard.isDown ("l")) then
-    notefalling = 0
-    shootxposition = 515
-		shoot(shootxposition)
-	end
 end
 
 function love.update(dt)
+  animation:update(dt)
 	notes()
 	local remEnemy = {}
 	local remShot = {}
@@ -142,7 +148,7 @@ function love.update(dt)
         misstimer = 0
     end
   end
-  if (gamestate == 1) then
+  if (gamestate == 2) then
     if ((noteshit + notesmissed) >= 661) then
       if (previousscore <= (noteshit*100)) then
         previousscore = noteshit*100
@@ -250,22 +256,38 @@ function love.draw()
   
   if gamestate == 0 then
     love.graphics.setColor(255,255,255,255)
-    love.graphics.setFont(font3)
-    love.graphics.draw(menugraphic,0,0)
-    love.graphics.draw(song1,645,198,0,0.2,0.2)
-    love.graphics.print("Lite Show Magic\nCrackTraxxxx\nBEST:"..previousscore.."\nPress 1 to Play", 840, 198)
-    love.graphics.print("D F J K for each key\nP to start song", 780, 500)
-    love.graphics.draw(nosong,645,340,0,0.35,0.35)
-    love.graphics.draw(nosong,645,485,0,0.35,0.35)
-    love.graphics.setFont(font2)
+    animation:draw(titlebackground,0,-600,0,1.48,1.48)
+    love.graphics.draw(titlegraphic,90,0,0,0.5,0.5)
+
+    -- let's draw some ground
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.rectangle("fill", 380, 450, 300, 100)
+    
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.rectangle("fill", 380, 600, 300, 100)
   end
-  if gamestate == 1 then
+    if gamestate == 1 then
+    love.graphics.setColor(255,255,255,255)
+    animation:draw(titlebackground,0,-600,0,1.48,1.48)
+
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.rectangle("fill", 180, 500, 300, 100)
+
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.rectangle("fill", 580, 500, 300, 100)
+    
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.rectangle("fill", 380, 660, 300, 100)
+    
+    love.graphics.draw(song1,180,160,0,0.6,0.6)
+    love.graphics.draw(song2,580,160,0,1.5,1.5)
+  end
+  if gamestate == 2 then
     love.graphics.setColor(255,255,255,255)
     love.graphics.draw(backgroundgraphic,0,0)
     love.graphics.draw(song1,630,198,0,0.45,0.45)
     love.graphics.print("Lite Show Magic\nCrackTraxxxx", 650, 500)
-  end
-  	-- let's draw some ground
+      	-- let's draw some ground
 	love.graphics.setColor(0,255,0,255)
 	love.graphics.rectangle("fill", 0, 715, 605, 15)
 	-- let's draw some ground
@@ -274,6 +296,8 @@ function love.draw()
   	-- let's draw some ground
 	love.graphics.setColor(255,255,255,255)
 	love.graphics.rectangle("fill", 605, 0, 10, 800)
+  end
+
 	
 	
 	-- let's draw our heros shots
@@ -287,7 +311,7 @@ function love.draw()
     love.graphics.setColor(0,255,255,255)
 		love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
 	end
-  if gamestate == 1 then
+  if gamestate == 2 then
     love.graphics.setColor(255,255,255,255)
     love.graphics.print("SCORE: "..noteshit*100, 650, 25)
     love.graphics.print("MISSED NOTES: "..notesmissed, 650, 95)
