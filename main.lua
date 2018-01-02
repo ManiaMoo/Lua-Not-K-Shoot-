@@ -19,10 +19,17 @@ function love.load()
   previousscore = 0
   endtimer = 0
   songending = 0
+  selectstate = 0
+  previewing = 0
 	enemies = {}
-  menumusic = love.audio.newSource("Brynhildr.mp3")
-  titlegraphic = love.graphics.newImage("Dual Step Logo.png")
   
+  menumusic = love.audio.newSource("Brynhildr.mp3")
+  music1 = love.audio.newSource("inthegarden.mp3")
+  previewMusic1 = love.audio.newSource("previewinthegarden.mp3")
+  music2 = love.audio.newSource("Tenkuu.mp3")
+  previewMusic2 = love.audio.newSource("previewtenkuu.mp3")
+  
+  titlegraphic = love.graphics.newImage("Dual Step Logo.png")
   titlebackground = love.graphics.newImage("menu background.png")
   local g = anim8.newGrid(720, 1280, titlebackground:getWidth(), titlebackground:getHeight())
   animation = anim8.newAnimation(g('1-4',1, '1-4',2), 0.05)
@@ -30,14 +37,18 @@ function love.load()
   backgroundgraphic = love.graphics.newImage("ingame.png")
   song1 = love.graphics.newImage("fromgardern.jpg")
   song2 = love.graphics.newImage("672344.png")
+  button = love.graphics.newImage("menu buttons.png")
+  button2 = love.graphics.newImage("menu buttons select.png")
+  
   hitmarker = love.graphics.newImage("hitmarker.png")
   love.gameload()
   
 
 end
 function love.gameload()
-      menumusic:setVolume(0.25)
-      menumusic:play()
+  
+  menumusic:setVolume(0.25)
+  menumusic:play()
   if (gamestate == 0) then
 
   end
@@ -94,11 +105,60 @@ function love.gameload()
 end
 function love.keypressed(key)
   if (key == "return") then
-    gamestate = 1
-    love.gameload()
-    print (noteshit)
+    if (gamestate == 0) then
+      if selectstate == 1 then
+        gamestate = 1
+      end
+      if selectstate == 2 then
+        love.event.quit()
+      end
+    end
+    if (gamestate == 1) then
+      if selectstate == 2 then
+        gamestate = 0
+      end
+      if selectstate == 3 then
+        gamestate = 2
+      end
+      if selectstate == 4 then
+        gamestate = 3
+      end
+    end
 	end
-   if (key == "2") then
+  
+  if (key == "up") then
+      selectstate = 1
+  end
+  if (key == "down") then
+      selectstate = 2
+    if (gamestate == 1) then
+      previewing = 0
+      previewMusic1:stop()
+      previewMusic2:stop()
+      menumusic:setVolume(0.25)
+    end
+  end
+  if (key == "left") then
+      selectstate = 3
+    if (gamestate == 1) then
+      previewing = 1
+      previewMusic1:setVolume(0.5)
+      previewMusic2:stop()
+      previewMusic1:play()
+    end
+  end
+  if (key == "right") then
+    selectstate = 4
+      if (gamestate == 1) then
+        previewing = 1
+        previewMusic2:setVolume(0.5)
+        previewMusic1:stop()
+        previewMusic2:play()
+    end
+  end
+    
+  
+  if (key == "2") then
     gamestate = 3
     print (notesmissed)
 	end
@@ -137,6 +197,12 @@ end
 function love.update(dt)
   animation:update(dt)
 	notes()
+  if previewing == 0 then
+    menumusic:setVolume(0.25)
+  end
+  if previewing == 1 then
+    menumusic:setVolume(0.0)
+  end
 	local remEnemy = {}
 	local remShot = {}
   screen:update(dt)
@@ -258,27 +324,44 @@ function love.draw()
     love.graphics.setColor(255,255,255,255)
     animation:draw(titlebackground,0,-600,0,1.48,1.48)
     love.graphics.draw(titlegraphic,90,0,0,0.5,0.5)
-
     -- let's draw some ground
     love.graphics.setColor(255,255,255,255)
-    love.graphics.rectangle("fill", 380, 450, 300, 100)
+    love.graphics.draw(button, 380, 450, 0, 1, 1)
     
     love.graphics.setColor(255,255,255,255)
-    love.graphics.rectangle("fill", 380, 600, 300, 100)
+    love.graphics.draw(button, 380, 600, 0, 1, 1)
+    
+    if selectstate == 1 then
+    love.graphics.draw(button2, 380, 450, 0, 1, 1)
+    end
+    if selectstate == 2 then
+    love.graphics.draw(button2, 380, 600, 0, 1, 1)
+    end
+    
   end
     if gamestate == 1 then
     love.graphics.setColor(255,255,255,255)
     animation:draw(titlebackground,0,-600,0,1.48,1.48)
 
     love.graphics.setColor(255,255,255,255)
-    love.graphics.rectangle("fill", 180, 500, 300, 100)
+    love.graphics.draw(button, 180, 500, 0, 1, 1)
 
     love.graphics.setColor(255,255,255,255)
-    love.graphics.rectangle("fill", 580, 500, 300, 100)
+    love.graphics.draw(button, 580, 500, 0, 1, 1)
     
     love.graphics.setColor(255,255,255,255)
-    love.graphics.rectangle("fill", 380, 660, 300, 100)
+    love.graphics.draw(button, 380, 660, 0, 1, 1)
     
+    if selectstate == 2 then
+    love.graphics.draw(button2, 380, 660, 0, 1, 1)
+    end
+    if selectstate == 3 then
+    love.graphics.draw(button2, 180, 500, 0, 1, 1)
+    end
+    if selectstate == 4 then
+    love.graphics.draw(button2, 580, 500, 0, 1, 1)
+    end    
+    love.graphics.setColor(255,255,255,255)
     love.graphics.draw(song1,180,160,0,0.6,0.6)
     love.graphics.draw(song2,580,160,0,1.5,1.5)
   end
