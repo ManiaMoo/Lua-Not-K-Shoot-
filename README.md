@@ -1,1 +1,1 @@
-Git Repos
+This document contains the TGP coursework of Miomu Green and Takudzwa Ash Maoko, worked on colaberatively by both, Certain elements of this repo contain merged branches that were produced outside of an online environment, and may not be clearly reflected in the staging of the repo.
