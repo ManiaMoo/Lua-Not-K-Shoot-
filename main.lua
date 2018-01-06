@@ -314,7 +314,7 @@ function love.draw()
   screen:apply()
   font1 = love.graphics.newFont("digitalfont.ttf", 56)
   font2 = love.graphics.newFont("square.ttf", 42)
-  font3 = love.graphics.newFont("square.ttf", 26)
+  font3 = love.graphics.newFont("square.ttf", 32)
   love.graphics.setFont(font2)
 
   	-- let's draw some ground
@@ -327,7 +327,6 @@ function love.draw()
     -- let's draw some ground
     love.graphics.setColor(255,255,255,255)
     love.graphics.draw(button, 380, 450, 0, 1, 1)
-    
     love.graphics.setColor(255,255,255,255)
     love.graphics.draw(button, 380, 600, 0, 1, 1)
     
@@ -337,6 +336,8 @@ function love.draw()
     if selectstate == 2 then
     love.graphics.draw(button2, 380, 600, 0, 1, 1)
     end
+        love.graphics.print("PLAY", 485, 480)
+        love.graphics.print("EXIT", 485, 630)
     
   end
     if gamestate == 1 then
@@ -364,6 +365,15 @@ function love.draw()
     love.graphics.setColor(255,255,255,255)
     love.graphics.draw(song1,180,160,0,0.6,0.6)
     love.graphics.draw(song2,580,160,0,1.5,1.5)
+    
+    love.graphics.setFont(font3)
+    love.graphics.print("In the Garden\n    -Primary-", 220, 512)
+    love.graphics.print("Tenkuu no Yoake\n       -Cuvelia-", 600, 512)
+    love.graphics.setFont(font2)
+    love.graphics.print("EXIT", 490, 685)
+
+
+    
   end
   if gamestate == 2 then
     love.graphics.setColor(255,255,255,255)
